@@ -28,4 +28,25 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) startPedometerUpdatesFromDate:(CDVInvokedUrlCommand*)command;
+{
+    __block CDVPluginResult* pluginResult = nil;
+
+    [[[CMPedometer alloc] init] startPedometerUpdatesFromDate:[NSDate date] withHandler:^(CMPedometerData *pedometerData, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (error)
+            {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+            }
+            else
+            {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:pedometerData];
+                [pluginResult setKeepCallbackAsBool:true];
+            }
+
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        });
+    }];
+}
+
 @end
