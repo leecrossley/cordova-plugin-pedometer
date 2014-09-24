@@ -30,11 +30,19 @@ pedometer.isStepCountingAvailable(successCallback, failureCallback);
 pedometer.isDistanceAvailable(successCallback, failureCallback);
 ```
 
+Distance estimation indicates the ability to use step information to supply the approximate distance traveled by the user.
+
+This capability is not supported on all devices, even with iOS 8.
+
 ### isFloorCountingAvailable
 
 ```js
 pedometer.isFloorCountingAvailable(successCallback, failureCallback);
 ```
+
+Floor counting indicates the ability to count the number of floors the user walks up or down using stairs.\
+
+This capability is not supported on all devices, even with iOS 8.
 
 ## Platform Support
 
