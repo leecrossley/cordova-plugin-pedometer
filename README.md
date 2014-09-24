@@ -30,7 +30,7 @@ pedometer.isStepCountingAvailable(successCallback, failureCallback);
 pedometer.isDistanceAvailable(successCallback, failureCallback);
 ```
 
-Distance estimation indicates the ability to use step information to supply the approximate distance traveled by the user.
+Distance estimation indicates the ability to use step information to supply the approximate distance travelled by the user.
 
 This capability is not supported on all devices, even with iOS 8.
 

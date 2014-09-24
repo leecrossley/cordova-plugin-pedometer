@@ -17,5 +17,12 @@ Pedometer.prototype.isFloorCountingAvailable = function (onSuccess, onError) {
     exec(onSuccess, onError, "Pedometer", "isFloorCountingAvailable", []);
 };
 
+Pedometer.prototype.startPedometerUpdatesFromDate = function (onSuccess, onError) {
+    exec(onSuccess, onError, "Pedometer", "startPedometerUpdatesFromDate", []);
+};
+
+Pedometer.prototype.stopPedometerUpdates = function (onSuccess, onError) {
+    exec(onSuccess, onError, "Pedometer", "stopPedometerUpdates", []);
+};
 
 module.exports = new Pedometer();
