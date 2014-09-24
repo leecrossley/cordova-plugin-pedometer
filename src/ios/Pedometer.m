@@ -8,6 +8,10 @@
 #import "CoreMotion/CoreMotion.h"
 #import "Pedometer.h"
 
+@interface Pedometer ()
+    @property (nonatomic, strong) CMPedometer *pedometer;
+@end
+
 @implementation Pedometer
 
 - (void) isStepCountingAvailable:(CDVInvokedUrlCommand*)command;
@@ -28,11 +32,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void) startPedometerUpdatesFromDate:(CDVInvokedUrlCommand*)command;
+- (void) startPedometerUpdates:(CDVInvokedUrlCommand*)command;
 {
+    self.pedometer = [[CMPedometer alloc] init];
+
     __block CDVPluginResult* pluginResult = nil;
 
-    [[[CMPedometer alloc] init] startPedometerUpdatesFromDate:[NSDate date] withHandler:^(CMPedometerData *pedometerData, NSError *error) {
+    [self.pedometer startPedometerUpdatesFromDate:[NSDate date] withHandler:^(CMPedometerData *pedometerData, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error)
             {
@@ -40,13 +46,26 @@
             }
             else
             {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:pedometerData];
+                NSDictionary* pedestrianData = @{
+                    @"numberOfSteps": pedometerData.numberOfSteps,
+                    @"distance": pedometerData.distance,
+                    @"floorsAscended": pedometerData.floorsAscended,
+                    @"floorsDescended": pedometerData.floorsDescended
+                };
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
                 [pluginResult setKeepCallbackAsBool:true];
             }
 
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         });
     }];
+}
+
+- (void) stopPedometerUpdates:(CDVInvokedUrlCommand*)command;
+{
+    [self.pedometer stopPedometerUpdates];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end

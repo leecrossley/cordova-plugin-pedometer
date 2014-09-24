@@ -17,8 +17,8 @@ Pedometer.prototype.isFloorCountingAvailable = function (onSuccess, onError) {
     exec(onSuccess, onError, "Pedometer", "isFloorCountingAvailable", []);
 };
 
-Pedometer.prototype.startPedometerUpdatesFromDate = function (onSuccess, onError) {
-    exec(onSuccess, onError, "Pedometer", "startPedometerUpdatesFromDate", []);
+Pedometer.prototype.startPedometerUpdates = function (onSuccess, onError) {
+    exec(onSuccess, onError, "Pedometer", "startPedometerUpdates", []);
 };
 
 Pedometer.prototype.stopPedometerUpdates = function (onSuccess, onError) {

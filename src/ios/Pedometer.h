@@ -12,7 +12,7 @@
 - (void) isDistanceAvailable:(CDVInvokedUrlCommand*)command;
 - (void) isFloorCountingAvailable:(CDVInvokedUrlCommand*)command;
 
-- (void) startPedometerUpdatesFromDate:(CDVInvokedUrlCommand*)command;
+- (void) startPedometerUpdates:(CDVInvokedUrlCommand*)command;
 - (void) stopPedometerUpdates:(CDVInvokedUrlCommand*)command;
 
 @end
