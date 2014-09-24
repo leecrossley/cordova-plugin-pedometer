@@ -44,6 +44,11 @@ Floor counting indicates the ability to count the number of floors the user walk
 
 This capability is not supported on all devices, even with iOS 8.
 
+
+## Live pedometer data
+
+TODO
+
 ## Platform Support
 
 iOS 8+ only.
