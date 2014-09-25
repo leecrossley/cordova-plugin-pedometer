@@ -69,7 +69,7 @@ Stops the delivery of recent pedestrian data updates to your Cordova app.
 pedometer.startPedometerUpdates(successCallback, failureCallback);
 ```
 
-## Platform Support
+## Platform and device support
 
 iOS 8+ only. These capabilities are not supported on all devices, even with iOS 8, so please ensure you use the *check feature support* functions.
 
