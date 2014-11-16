@@ -66,7 +66,7 @@ When the app is suspended, the delivery of updates stops temporarily. Upon retur
 Stops the delivery of recent pedestrian data updates to your Cordova app.
 
 ```js
-pedometer.startPedometerUpdates(successCallback, failureCallback);
+pedometer.stopPedometerUpdates(successCallback, failureCallback);
 ```
 
 ## Platform and device support
