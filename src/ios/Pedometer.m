@@ -47,6 +47,8 @@
             else
             {
                 NSDictionary* pedestrianData = @{
+                    @"startDate": [NSString stringWithFormat:@"%f", [pedometerData.startDate timeIntervalSince1970] * 1000],
+                    @"endDate": [NSString stringWithFormat:@"%f", [pedometerData.endDate timeIntervalSince1970] * 1000],
                     @"numberOfSteps": pedometerData.numberOfSteps,
                     @"distance": pedometerData.distance,
                     @"floorsAscended": pedometerData.floorsAscended,

@@ -49,6 +49,8 @@ Starts the delivery of recent pedestrian-related data to your Cordova app.
 
 ```js
 var successHandler = function (pedometerData) {
+    // pedometerData.startDate; -> ms since 1970
+    // pedometerData.endDate; -> ms since 1970
     // pedometerData.numberOfSteps;
     // pedometerData.distance;
     // pedometerData.floorsAscended;
