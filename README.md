@@ -4,6 +4,14 @@
 
 ## Install
 
+#### Latest published version on npm (with Cordova CLI >= 5.0.0)
+
+```
+cordova plugin add cordova-plugin-pedometer
+```
+
+#### Latest version from GitHub
+
 ```
 cordova plugin add https://github.com/leecrossley/cordova-plugin-pedometer.git
 ```
