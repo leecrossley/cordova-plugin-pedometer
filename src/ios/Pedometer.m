@@ -9,10 +9,15 @@
 #import "Pedometer.h"
 
 @interface Pedometer ()
-    @property (nonatomic, strong) CMPedometer *pedometer;
+@property (nonatomic, strong) CMPedometer *pedometer;
 @end
 
 @implementation Pedometer
+
+- (void) pluginInitialize
+{
+    self.pedometer = [[CMPedometer alloc] init];
+}
 
 - (void) isStepCountingAvailable:(CDVInvokedUrlCommand*)command;
 {
@@ -34,8 +39,6 @@
 
 - (void) startPedometerUpdates:(CDVInvokedUrlCommand*)command;
 {
-    self.pedometer = [[CMPedometer alloc] init];
-
     __block CDVPluginResult* pluginResult = nil;
 
     [self.pedometer startPedometerUpdatesFromDate:[NSDate date] withHandler:^(CMPedometerData *pedometerData, NSError *error) {
@@ -47,13 +50,13 @@
             else
             {
                 NSDictionary* pedestrianData = @{
-                    @"startDate": [NSString stringWithFormat:@"%f", [pedometerData.startDate timeIntervalSince1970] * 1000],
-                    @"endDate": [NSString stringWithFormat:@"%f", [pedometerData.endDate timeIntervalSince1970] * 1000],
-                    @"numberOfSteps": pedometerData.numberOfSteps,
-                    @"distance": pedometerData.distance,
-                    @"floorsAscended": pedometerData.floorsAscended,
-                    @"floorsDescended": pedometerData.floorsDescended
-                };
+                                                 @"startDate": [NSString stringWithFormat:@"%f", [pedometerData.startDate timeIntervalSince1970] * 1000],
+                                                 @"endDate": [NSString stringWithFormat:@"%f", [pedometerData.endDate timeIntervalSince1970] * 1000],
+                                                 @"numberOfSteps": pedometerData.numberOfSteps,
+                                                 @"distance": pedometerData.distance,
+                                                 @"floorsAscended": pedometerData.floorsAscended,
+                                                 @"floorsDescended": pedometerData.floorsDescended
+                                                 };
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
                 [pluginResult setKeepCallbackAsBool:true];
             }
@@ -72,8 +75,6 @@
 
 - (void) queryData:(CDVInvokedUrlCommand*)command;
 {
-    self.pedometer = [[CMPedometer alloc] init];
-
     NSDictionary* args = [command.arguments objectAtIndex:0];
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -94,11 +95,11 @@
             else
             {
                 NSDictionary* pedestrianData = @{
-                    @"numberOfSteps": pedometerData.numberOfSteps,
-                    @"distance": pedometerData.distance,
-                    @"floorsAscended": pedometerData.floorsAscended,
-                    @"floorsDescended": pedometerData.floorsDescended
-                };
+                                                 @"numberOfSteps": pedometerData.numberOfSteps,
+                                                 @"distance": pedometerData.distance,
+                                                 @"floorsAscended": pedometerData.floorsAscended,
+                                                 @"floorsDescended": pedometerData.floorsDescended
+                                                 };
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
             }
 
