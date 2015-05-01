@@ -14,6 +14,13 @@
 
 @implementation Pedometer
 
+- (CMPedometer*)pedometer {
+    if (_pedometer == nil) {
+        _pedometer = [[CMPedometer alloc] init];
+    }
+    return _pedometer;
+}
+
 - (void) isStepCountingAvailable:(CDVInvokedUrlCommand*)command;
 {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[CMPedometer isStepCountingAvailable]];
@@ -34,8 +41,6 @@
 
 - (void) startPedometerUpdates:(CDVInvokedUrlCommand*)command;
 {
-    self.pedometer = [[CMPedometer alloc] init];
-
     __block CDVPluginResult* pluginResult = nil;
 
     [self.pedometer startPedometerUpdatesFromDate:[NSDate date] withHandler:^(CMPedometerData *pedometerData, NSError *error) {
@@ -72,8 +77,6 @@
 
 - (void) queryData:(CDVInvokedUrlCommand*)command;
 {
-    self.pedometer = [[CMPedometer alloc] init];
-
     NSDictionary* args = [command.arguments objectAtIndex:0];
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
