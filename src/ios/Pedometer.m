@@ -76,8 +76,12 @@
 
     NSDictionary* args = [command.arguments objectAtIndex:0];
 
-    NSDate* startDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
-    NSDate* endDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+    NSDate* startDate = [dateFormatter dateFromString:[args objectForKey:@"startDate"]];
+    NSDate* endDate = [dateFormatter dateFromString:[args objectForKey:@"endDate"]];
 
     __block CDVPluginResult* pluginResult = nil;
 

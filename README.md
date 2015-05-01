@@ -97,7 +97,7 @@ var successHandler = function (pedometerData) {
 var options = {
     "startDate": new Date("Fri May 01 2015 15:20:00"),
     "endDate": new Date("Fri May 01 2015 15:25:00")
-}
+};
 pedometer.queryData(successHandler, onError, options);
 ```
 
