@@ -76,8 +76,8 @@
 
     NSDictionary* args = [command.arguments objectAtIndex:0];
 
-    NSDate startDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
-    NSDate endDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
+    NSDate* startDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
+    NSDate* endDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
 
     __block CDVPluginResult* pluginResult = nil;
 
