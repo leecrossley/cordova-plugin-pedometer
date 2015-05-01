@@ -70,4 +70,37 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) queryData:(CDVInvokedUrlCommand*)command;
+{
+    self.pedometer = [[CMPedometer alloc] init];
+
+    NSDictionary* args = [command.arguments objectAtIndex:0];
+
+    NSDate startDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
+    NSDate endDate = [NSDate dateWithTimeIntervalSince1970:[[args objectForKey:@"startDate"] doubleValue] / 1000];
+
+    __block CDVPluginResult* pluginResult = nil;
+
+    [self.pedometer queryPedometerDataFromDate:startDate toDate:endDate withHandler:^(CMPedometerData *pedometerData, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (error)
+            {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+            }
+            else
+            {
+                NSDictionary* pedestrianData = @{
+                    @"numberOfSteps": pedometerData.numberOfSteps,
+                    @"distance": pedometerData.distance,
+                    @"floorsAscended": pedometerData.floorsAscended,
+                    @"floorsDescended": pedometerData.floorsDescended
+                };
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
+            }
+
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        });
+    }];
+}
+
 @end
