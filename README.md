@@ -79,6 +79,28 @@ Stops the delivery of recent pedestrian data updates to your Cordova app.
 pedometer.stopPedometerUpdates(successCallback, failureCallback);
 ```
 
+## Historical pedometer data
+
+### queryData
+
+Retrieves the data between the specified start and end dates.
+
+The `startDate` and `endDate` options are required and can be constructed in any valid JavaScript way (e.g. `new Date(2015, 4, 1, 15, 20, 00)` is also valid, as is milliseconds).
+
+```js
+var successHandler = function (pedometerData) {
+    // pedometerData.numberOfSteps;
+    // pedometerData.distance;
+    // pedometerData.floorsAscended;
+    // pedometerData.floorsDescended;
+};
+var options = {
+    "startDate": new Date("Fri May 01 2015 15:20:00"),
+    "endDate": new Date("Fri May 01 2015 15:25:00")
+}
+pedometer.queryData(successHandler, onError, options);
+```
+
 ## Platform and device support
 
 iOS 8+ only. These capabilities are not supported on all devices, even with iOS 8, so please ensure you use the *check feature support* functions.
