@@ -25,4 +25,8 @@ Pedometer.prototype.stopPedometerUpdates = function (onSuccess, onError) {
     exec(onSuccess, onError, "Pedometer", "stopPedometerUpdates", []);
 };
 
+Pedometer.prototype.queryData = function (onSuccess, onError, options) {
+    exec(onSuccess, onError, "Pedometer", "queryData", [options]);
+};
+
 module.exports = new Pedometer();
