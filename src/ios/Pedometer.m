@@ -14,7 +14,7 @@
 
 @implementation Pedometer
 
-- (CMPedometer*)pedometer {
+- (CMPedometer*) pedometer {
     if (_pedometer == nil) {
         _pedometer = [[CMPedometer alloc] init];
     }
