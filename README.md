@@ -103,6 +103,8 @@ var options = {
 pedometer.queryData(successHandler, onError, options);
 ```
 
+**ONLY WORKS IN iOS**
+
 ## Platform and device support
 
 iOS 8+ only. These capabilities are not supported on all devices, even with iOS 8, so please ensure you use the *check feature support* functions.
