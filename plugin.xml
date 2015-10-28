@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-pedometer" version="0.3.3">
-    <name>Core Motion Pedometer</name>
-    <author>Lee Crossley (http://ilee.co.uk/)</author>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-pedometer" version="0.4">
+    <name>Pedometer</name>
+    <author>Lee Crossley (http://ilee.co.uk/), Dario Salvi</author>
     <description>Cordova / PhoneGap Plugin for the Core Motion Pedometer to fetch pedestrian-related data,
         such as step counts and other information about the distance travelled.</description>
     <keywords>cordova, core motion, pedometer, steps, distance, pedestrian</keywords>
@@ -12,6 +12,8 @@
     <js-module src="www/pedometer.js" name="Pedometer">
         <clobbers target="pedometer" />
     </js-module>
+
+    <!-- iOS -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="Pedometer">
@@ -22,5 +24,18 @@
         <header-file src="src/ios/Pedometer.h" />
         <source-file src="src/ios/Pedometer.m" />
         <framework src="CoreMotion.framework" />
+    </platform>
+
+    <!-- android -->
+    <platform name="android">
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Pedometer">
+                <param name="android-package" value="org.apache.cordova.pedometer.PedoListener"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/PedoListener.java" target-dir="src/org/apache/cordova/pedometer" />
+
     </platform>
 </plugin>

@@ -1,17 +1,18 @@
 {
   "name": "cordova-plugin-pedometer",
-  "version": "0.3.3",
-  "author": "Lee Crossley <leee@hotmail.co.uk> (http://ilee.co.uk/)",
-  "description": "Cordova / PhoneGap Plugin for the Core Motion Pedometer to fetch pedestrian-related data, such as step counts and other information about the distance travelled.",
+  "version": "0.4",
+  "author": "Lee Crossley <leee@hotmail.co.uk> (http://ilee.co.uk/). Dario Salvi <dariosalvi78@gmail.com>",
+  "description": "Cordova / PhoneGap Plugin for Pedometer to fetch pedestrian-related data, such as step counts and other information about the distance travelled. It works with hardware pedometers, like the Core Motion in iOS and Android motion processors.",
   "cordova": {
     "id": "cordova-plugin-pedometer",
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leecrossley/cordova-plugin-pedometer.git"
+    "url": "git+https://github.com/dariosalvi78/cordova-plugin-pedometer.git"
   },
   "keywords": [
     "cordova",
