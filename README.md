@@ -18,7 +18,7 @@ cordova plugin add https://github.com/leecrossley/cordova-plugin-pedometer.git
 
 You **do not** need to reference any JavaScript, the Cordova plugin architecture will add a pedometer object to your root automatically when you build.
 
-## Check feature support
+## Check feature support (iOS only)
 
 ### isStepCountingAvailable
 
@@ -79,7 +79,7 @@ Stops the delivery of recent pedestrian data updates to your Cordova app.
 pedometer.stopPedometerUpdates(successCallback, failureCallback);
 ```
 
-## Historical pedometer data
+## Historical pedometer data (iOS only)
 
 ### queryData
 
@@ -103,7 +103,8 @@ pedometer.queryData(successHandler, onError, options);
 
 ## Platform and device support
 
-iOS 8+ only. These capabilities are not supported on all devices, even with iOS 8, so please ensure you use the *check feature support* functions.
+- iOS 8+. These capabilities are not supported on all devices, even with iOS 8, so please ensure you use the *check feature support* functions.
+- Android (when associated hardware is available). Only live pedometer data is supported.
 
 ## License
 
