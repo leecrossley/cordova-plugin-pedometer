@@ -54,10 +54,10 @@
                 NSDictionary* pedestrianData = @{
                     @"startDate": [NSString stringWithFormat:@"%f", [pedometerData.startDate timeIntervalSince1970] * 1000],
                     @"endDate": [NSString stringWithFormat:@"%f", [pedometerData.endDate timeIntervalSince1970] * 1000],
-                    @"numberOfSteps": pedometerData.numberOfSteps,
-                    @"distance": pedometerData.distance,
-                    @"floorsAscended": pedometerData.floorsAscended,
-                    @"floorsDescended": pedometerData.floorsDescended
+                    @"numberOfSteps": [CMPedometer isStepCountingAvailable] && pedometerData.numberOfSteps ? pedometerData.numberOfSteps : [NSNumber numberWithInt:0],
+                    @"distance": [CMPedometer isDistanceAvailable] && pedometerData.distance ? pedometerData.distance : [NSNumber numberWithInt:0],
+                    @"floorsAscended": [CMPedometer isFloorCountingAvailable] && pedometerData.floorsAscended ? pedometerData.floorsAscended : [NSNumber numberWithInt:0],
+                    @"floorsDescended": [CMPedometer isFloorCountingAvailable] && pedometerData.floorsDescended ? pedometerData.floorsDescended : [NSNumber numberWithInt:0]
                 };
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
                 [pluginResult setKeepCallbackAsBool:true];
@@ -97,10 +97,10 @@
             else
             {
                 NSDictionary* pedestrianData = @{
-                    @"numberOfSteps": pedometerData.numberOfSteps,
-                    @"distance": pedometerData.distance,
-                    @"floorsAscended": pedometerData.floorsAscended,
-                    @"floorsDescended": pedometerData.floorsDescended
+                    @"numberOfSteps": [CMPedometer isStepCountingAvailable] && pedometerData.numberOfSteps ? pedometerData.numberOfSteps : [NSNumber numberWithInt:0],
+                    @"distance": [CMPedometer isDistanceAvailable] && pedometerData.distance ? pedometerData.distance : [NSNumber numberWithInt:0],
+                    @"floorsAscended": [CMPedometer isFloorCountingAvailable] && pedometerData.floorsAscended ? pedometerData.floorsAscended : [NSNumber numberWithInt:0],
+                    @"floorsDescended": [CMPedometer isFloorCountingAvailable] && pedometerData.floorsDescended ? pedometerData.floorsDescended : [NSNumber numberWithInt:0]
                 };
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pedestrianData];
             }

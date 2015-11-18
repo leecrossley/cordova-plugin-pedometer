@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-pedometer" version="0.4.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-pedometer" version="0.4.1">
     <name>Core Motion Pedometer</name>
     <author>Lee Crossley (http://ilee.co.uk/)</author>
     <description>Cordova / PhoneGap Plugin for the Core Motion Pedometer to fetch pedestrian-related data,
