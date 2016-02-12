@@ -150,7 +150,7 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
 
         // If found, then register as listener
         if ((list != null) && (list.size() > 0)) {
-            mSensor = list.get(0);
+            mSensor = list.get(0);//get the first one
             if (sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)) {
                 running = true;
             } else {
@@ -162,6 +162,7 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
             list = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 
             if ((list != null) && (list.size() > 0)) {
+                mSensor = list.get(0);//get the first one
                 if (sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)) {
                     running = true;
                 } else {
@@ -205,10 +206,10 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             float steps = event.values[0];
 
-            if(this.startsteps == 0)
-                this.startsteps = steps;
+            if(startsteps == 0)
+                startsteps = steps;
 
-            steps = steps - this.startsteps;
+            steps = steps - startsteps;
 
             PluginResult result;
             result = new PluginResult(PluginResult.Status.OK, getStepsJSON(steps));
@@ -218,10 +219,13 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
             //fallback scenario
             int steps = fallback.getSteps(event.timestamp, event.values[0], event.values[1], event.values[2]);
 
-            PluginResult result;
-            result = new PluginResult(PluginResult.Status.OK, getStepsJSON(steps));
-            result.setKeepCallback(true);
-            callbackContext.sendPluginResult(result);
+            if(startsteps != steps){
+                PluginResult result;
+                result = new PluginResult(PluginResult.Status.OK, getStepsJSON(steps));
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+                startsteps = steps;
+            }
         } else {
             //ignore it
         }
@@ -261,7 +265,7 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
         // pedometerData.floorsAscended;
         // pedometerData.floorsDescended;
         try {
-            r.put("startDate", this.starttimestamp);
+            r.put("startDate", starttimestamp);
             r.put("endDate", System.currentTimeMillis());
             r.put("numberOfSteps", steps);
         } catch (JSONException e) {
