@@ -25,56 +25,50 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 
 /**
- * This class listens to the pedometer sensor
+ * This class listens to the pedometer sensor,
+ * if no pedometer is installed, a fallback implementation is used.
  */
 public class PedoListener extends CordovaPlugin implements SensorEventListener {
 
-    public static int STOPPED = 0;
-    public static int STARTING = 1;
-    public static int RUNNING = 2;
-    public static int ERROR_FAILED_TO_START = 3;
-    public static int ERROR_NO_SENSOR_FOUND = 4;
+    //first value, to be substracted
+    private float startsteps;
 
-    private int status;     // status of listener
-    private float startsteps; //first value, to be substracted
-    private long starttimestamp; //time stamp of when the measurement starts
+    //time stamp of when the measurement starts
+    private long starttimestamp;
 
-    private SensorManager sensorManager; // Sensor manager
-    private Sensor mSensor;             // Pedometer sensor returned by sensor manager
+    // Sensor manager
+    private SensorManager sensorManager;
 
-    private CallbackContext callbackContext; // Keeps track of the JS callback context.
+    // Pedometer or Accelerometer sensor returned by sensor manager
+    private Sensor mSensor;
+
+    //tells if the sensor is running or not
+    private boolean running = false;
+
+    //used as a fallback when the hardware step counter is not available
+    private AccelerometerPedometer fallback = new AccelerometerPedometer();
+
+    // Keeps track of the JS callback context.
+    private CallbackContext callbackContext;
 
     private Handler mainHandler=null;
 
-    /**
-     * Constructor
-     */
+
     public PedoListener() {
         this.starttimestamp = 0;
         this.startsteps = 0;
-        this.setStatus(PedoListener.STOPPED);
     }
 
-    /**
-     * Sets the context of the Command. This can then be used to do things like
-     * get file paths associated with the Activity.
-     *
-     * @param cordova the context of the main Activity.
-     * @param webView the associated CordovaWebView.
-     */
+
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
+        //starts the sensor service
         this.sensorManager = (SensorManager) cordova.getActivity().getSystemService(Context.SENSOR_SERVICE);
     }
 
     /**
      * Executes the request.
-     *
-     * @param action the action to execute.
-     * @param args the exec() arguments.
-     * @param callbackContext the callback context used when calling back into JavaScript.
-     * @return whether the action was valid.
      */
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
@@ -82,38 +76,50 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
         if (action.equals("isStepCountingAvailable")) {
             List<Sensor> list = this.sensorManager.getSensorList(Sensor.TYPE_STEP_COUNTER);
             if ((list != null) && (list.size() > 0)) {
-                this.win(true);
+                PluginResult result;
+                result = new PluginResult(PluginResult.Status.OK, true);
+                callbackContext.sendPluginResult(result);
                 return true;
             } else {
-                this.setStatus(PedoListener.ERROR_NO_SENSOR_FOUND);
-                this.win(false);
-                return true;
+                //check the fallback
+                list = this.sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+                if ((list != null) && (list.size() > 0)) {
+                    PluginResult result;
+                    result = new PluginResult(PluginResult.Status.OK, true);
+                    callbackContext.sendPluginResult(result);
+                    return true;
+                } else{
+                    PluginResult result;
+                    result = new PluginResult(PluginResult.Status.OK, false);
+                    callbackContext.sendPluginResult(result);
+                    return true;
+                }
             }
         } else if (action.equals("isDistanceAvailable")) {
             //distance is never available in Android
-            this.win(false);
+            PluginResult result;
+            result = new PluginResult(PluginResult.Status.OK, false);
+            callbackContext.sendPluginResult(result);
             return true;
         } else if (action.equals("isFloorCountingAvailable")) {
             //floor counting is never available in Android
-            this.win(false);
+            PluginResult result;
+            result = new PluginResult(PluginResult.Status.OK, false);
+            callbackContext.sendPluginResult(result);
             return true;
-        }
-        else if (action.equals("startPedometerUpdates")) {
-            if (this.status != PedoListener.RUNNING) {
-                // If not running, then this is an async call, so don't worry about waiting
-                // We drop the callback onto our stack, call start, and let start and the sensor callback fire off the callback down the road
-                this.start();
+        } else if (action.equals("startPedometerUpdates")) {
+            if (!running) {
+                start();
             }
             PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT, "");
             result.setKeepCallback(true);
             callbackContext.sendPluginResult(result);
             return true;
-        }
-        else if (action.equals("stopPedometerUpdates")) {
-            if (this.status == PedoListener.RUNNING) {
-                this.stop();
+        } else if (action.equals("stopPedometerUpdates")) {
+            if (running) {
+                stop();
             }
-            this.win(null);
+            callbackContext.success();
             return true;
         } else {
             // Unsupported action
@@ -121,45 +127,52 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
         }
     }
 
-    /**
-     * Called by the Broker when listener is to be shut down.
-     * Stop listener.
-     */
+
     public void onDestroy() {
-        this.stop();
+        stop();
     }
 
 
     /**
-     * Start listening for pedometers sensor.
+     * Start listening for sensor.
      */
     private void start() {
         // If already starting or running, then return
-        if ((this.status == PedoListener.RUNNING) || (this.status == PedoListener.STARTING)) {
+        if (running) {
             return;
         }
 
         starttimestamp = System.currentTimeMillis();
-        this.startsteps = 0;
-        this.setStatus(PedoListener.STARTING);
+        startsteps = 0;
 
         // Get pedometer from sensor manager
-        List<Sensor> list = this.sensorManager.getSensorList(Sensor.TYPE_STEP_COUNTER);
+        List<Sensor> list = sensorManager.getSensorList(Sensor.TYPE_STEP_COUNTER);
 
         // If found, then register as listener
         if ((list != null) && (list.size() > 0)) {
-            this.mSensor = list.get(0);
-            if (this.sensorManager.registerListener(this, this.mSensor, SensorManager.SENSOR_DELAY_UI)) {
-                this.setStatus(PedoListener.STARTING);
+            mSensor = list.get(0);
+            if (sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)) {
+                running = true;
             } else {
-                this.setStatus(PedoListener.ERROR_FAILED_TO_START);
-                this.fail(PedoListener.ERROR_FAILED_TO_START, "Device sensor returned an error.");
+                callbackContext.error("Pedometer sensor returned an error");
                 return;
-            };
+            }
         } else {
-            this.setStatus(PedoListener.ERROR_FAILED_TO_START);
-            this.fail(PedoListener.ERROR_FAILED_TO_START, "No sensors found to register step counter listening to.");
-            return;
+            //try with accelerometer
+            list = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+
+            if ((list != null) && (list.size() > 0)) {
+                if (sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)) {
+                    running = true;
+                } else {
+                    callbackContext.error("Accelerometer sensor returned an error");
+                    return;
+                }
+            } else {
+                running = false;
+                callbackContext.error("No suitable sensors found");
+                return;
+            }
         }
     }
 
@@ -167,10 +180,9 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
      * Stop listening to sensor.
      */
     private void stop() {
-        if (this.status != PedoListener.STOPPED) {
-            this.sensorManager.unregisterListener(this);
-        }
-        this.setStatus(PedoListener.STOPPED);
+        sensorManager.unregisterListener(this);
+        fallback.reset();
+        running = false;
     }
 
     /**
@@ -179,7 +191,6 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
       //nothing to do here
-      return;
     }
 
     /**
@@ -188,25 +199,32 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // Only look at step counter events
-        if (event.sensor.getType() != Sensor.TYPE_STEP_COUNTER) {
-            return;
-        }
-
         // If not running, then just return
-        if (this.status == PedoListener.STOPPED) {
-            return;
+        if (!running) return;
+
+        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+            float steps = event.values[0];
+
+            if(this.startsteps == 0)
+                this.startsteps = steps;
+
+            steps = steps - this.startsteps;
+
+            PluginResult result;
+            result = new PluginResult(PluginResult.Status.OK, getStepsJSON(steps));
+            result.setKeepCallback(true);
+            callbackContext.sendPluginResult(result);
+        } else if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            //fallback scenario
+            int steps = fallback.getSteps(event.timestamp, event.values[0], event.values[1], event.values[2]);
+
+            PluginResult result;
+            result = new PluginResult(PluginResult.Status.OK, getStepsJSON(steps));
+            result.setKeepCallback(true);
+            callbackContext.sendPluginResult(result);
+        } else {
+            //ignore it
         }
-        this.setStatus(PedoListener.RUNNING);
-
-        float steps = event.values[0];
-
-        if(this.startsteps == 0)
-          this.startsteps = steps;
-
-        steps = steps - this.startsteps;
-
-        this.win(this.getStepsJSON(steps));
     }
 
     /**
@@ -214,9 +232,8 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
      */
     @Override
     public void onReset() {
-        if (this.status == PedoListener.RUNNING) {
-            this.stop();
-        }
+        stop();
+        fallback.reset();
     }
 
     // Sends an error back to JS
@@ -234,30 +251,6 @@ public class PedoListener extends CordovaPlugin implements SensorEventListener {
         callbackContext.sendPluginResult(err);
     }
 
-    private void win(JSONObject message) {
-        // Success return object
-        PluginResult result;
-        if(message != null)
-            result = new PluginResult(PluginResult.Status.OK, message);
-        else
-            result = new PluginResult(PluginResult.Status.OK);
-
-        result.setKeepCallback(true);
-        callbackContext.sendPluginResult(result);
-    }
-
-    private void win(boolean success) {
-        // Success return object
-        PluginResult result;
-        result = new PluginResult(PluginResult.Status.OK, success);
-
-        result.setKeepCallback(true);
-        callbackContext.sendPluginResult(result);
-    }
-
-    private void setStatus(int status) {
-        this.status = status;
-    }
 
     private JSONObject getStepsJSON(float steps) {
         JSONObject r = new JSONObject();

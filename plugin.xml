@@ -36,6 +36,7 @@
         </config-file>
 
         <source-file src="src/android/PedoListener.java" target-dir="src/org/apache/cordova/pedometer" />
+        <source-file src="src/android/AccelerometerPedometer.java" target-dir="src/org/apache/cordova/pedometer" />
 
     </platform>
 </plugin>
