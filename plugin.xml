@@ -22,6 +22,10 @@
         <header-file src="src/ios/Pedometer.h" />
         <source-file src="src/ios/Pedometer.m" />
         <framework src="CoreMotion.framework" />
+		<!-- Usage description of Motion, mandatory since iOS 10 -->
+        <config-file target="*-Info.plist" parent="NSMotionUsageDescription">
+            <string/>
+        </config-file>
     </platform>
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
